@@ -21,6 +21,26 @@ Sub ChangeSelector()
 	End If
 End Sub
 
+Sub SaveAsCSV()
+	Dim FilePath As String
+	Dim FilePointer As Integer
+	Dim Row As Range
+	Dim Filter (0 to 0, 0 to 1) As String
+	Filter(0,0) = "Comma-Separated Values"
+	Filter(0,1) = "*.csv"
+	Call OpenSaveDialog("Save .csv file", Filter, FilePath)
+	If FilePath = "" Then
+		MsgBox("invalid file path", 0 + 48, "CSV Module")
+		Exit Sub
+	End If
+	FilePointer = FreeFile()
+	Open FilePath For Output As #FilePointer
+	For Each Row In ThisComponent.CurrentController.getSelection().getDataArray()
+		Print #FilePointer, CSVLINE(Row)
+	Next Row
+	Close #FilePointer
+End Sub
+
 Function CSVLINE(ParamArray Bereiche() As Variant) As String
 	Dim Ergebnis As String
 	Dim i As Integer

@@ -20,3 +20,18 @@ Sub SetDocumentProperty(PropName As String, ByVal Value As Any, Optional Flags A
 		oProps.AddProperty(PropName, Flags, Value)
 	End If
 End Sub
+
+Sub OpenSaveDialog(Title As String, Filters As Object, ByRef Pointer As String, Optional Mode As Integer = 10)
+	Dim i As Integer
+	Dim oFielDialog As Object
+	oFileDialog = com.sun.star.ui.dialogs.FilePicker.createWithMode(Mode)
+	With oFileDialog
+		.setTitle(Title)
+		For i = LBound(Filters) to UBound(Filters)
+			.appendFilter(Filters(i,0),Filters(i,1))
+		Next i
+		.appendFilter("all files","*.*")
+		If .Execute() <> 1 Then Exit Sub
+		Pointer = .SelectedFiles(0)
+	End With
+End Sub
