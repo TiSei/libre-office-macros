@@ -24,19 +24,17 @@ End Sub
 Function CSVLINE(ParamArray Bereiche() As Variant) As String
 	Dim Ergebnis As String
 	Dim i As Integer
-	Dim Bereich As Variant
 	Dim Zelle As Variant
-	
 	Ergebnis = ""
-	If UBound(Bereiche) = 0 Then
-		For Each Zelle In Bereiche(0)
-			Ergebnis = Ergebnis & Zelle & CSVData(1)
-		Next Zelle
-	Else
-		For i = LBound(Bereiche) To UBound(Bereiche)
-			Ergebnis = Ergebnis & CSVLINE(Bereiche(i)) & CSVData(1)
-		Next i
-	End If
+	For i = LBound(Bereiche) To UBound(Bereiche)
+		If IsArray(Bereiche(i)) Then
+			For Each Zelle in Bereiche(i)
+				Ergebnis = Ergebnis & Zelle & CSVData(1)
+			Next Zelle
+		Else
+			Ergebnis = Ergebnis & Bereiche(i) & CSVData(1)
+		End If
+	Next i
 	CSVLINE = TRIMLAST(Ergebnis)
 End Function
 
