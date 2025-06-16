@@ -5,6 +5,9 @@ Option Compatible
 Global CSVData(1) As String
 
 Sub StartUp()
+	If Not ThisComponent.SupportsService("com.sun.star.sheet.SpreadsheetDocument") Then
+		Exit Sub
+	End If
 	Call GetDocumentProperty("CSV_Module/Selector", CSVData(1), ",")
 	ThisComponent.calculateAll
 End Sub
@@ -71,5 +74,40 @@ Function TRIMLAST(Zelle As String, Optional Length As Integer = 1) As String
 	If Len(Zelle) > 0 Then
 		TRIMLAST = left(Zelle, Len(Zelle)-Length)
 	End If
+End Function
+
+Function SCANUP(rowIndex As Long, colIndex As Long) As String
+	On Error GoTo HandleError
+	Dim oSheet As Object, oCell As Object
+	oSheet = ThisComponent.CurrentController.ActiveSheet
+	rowIndex = rowIndex - 1
+	colIndex = colIndex - 1
+	Do While rowIndex >= 0
+		oCell = oSheet.getCellByPosition(colIndex, rowIndex)
+		If oCell.Type <> com.sun.star.table.CellContentType.EMPTY Then
+			If oCell.Type = com.sun.star.table.CellContentType.VALUE Then
+				SCANUP = oCell.Value
+			Else
+				SCANUP = oCell.String
+			End If
+			Exit Function
+		End If
+		rowIndex = rowIndex - 1
+	Loop
+	SCANUP = ""
+	Exit Function
+HandleError:
+	SCANUP = "#ERR"
+End Function
+
+Function SCANUP_REF(cellRef As String) As String
+	On Error GoTo HandleError
+	Dim oSheet As Object, oCell As Object
+	oSheet = ThisComponent.GetCurrentController.ActiveSheet
+	oCell = oSheet.getCellRangeByName(cellRef)
+	SCANUP_REF = SCANUP(oCell.CellAddress.Row + 1, oCell.CellAddress.Column + 1)
+	Exit Function
+HandleError:
+	SCANUP = "#ERR"
 End Function
 
