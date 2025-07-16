@@ -2,6 +2,12 @@
 
 Option Compatible
 
+Sub StartUp()
+	If ThisComponent.SupportsService("com.sun.star.sheet.SpreadsheetDocument") Then
+		Call CSV_Module.StartUp
+	End If
+ENd Sub
+
 Sub GetDocumentProperty(PropName As String, ByRef Pointer As Any, Optional Default As Any)
 	Dim oProps As Object
 	Pointer = Default

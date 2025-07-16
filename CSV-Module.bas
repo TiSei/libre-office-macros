@@ -5,10 +5,7 @@ Option Compatible
 Global CSVData(1) As String
 
 Sub StartUp()
-	If Not ThisComponent.SupportsService("com.sun.star.sheet.SpreadsheetDocument") Then
-		Exit Sub
-	End If
-	Call GetDocumentProperty("CSV_Module/Selector", CSVData(1), ",")
+	Call System_Module.GetDocumentProperty("CSV_Module/Selector", CSVData(1), ",")
 	ThisComponent.calculateAll
 End Sub
 
@@ -17,7 +14,7 @@ Sub ChangeSelector()
 	sInput = InputBox("Change default CSV Selector","CSV Module",CSVData(1))
 	If len(sInput) = 1 Then
 		CSVData(1) = sInput
-		Call SetDocumentProperty("CSV_Module/Selector", sInput)
+		Call System_Module.SetDocumentProperty("CSV_Module/Selector", sInput)
 		ThisComponent.calculateAll
 	Else
 		MsgBox("invalid CSV Selector, must be only one character", 0 + 48, "CSV Module"
@@ -31,7 +28,7 @@ Sub SaveAsCSV()
 	Dim Filter (0 to 0, 0 to 1) As String
 	Filter(0,0) = "Comma-Separated Values"
 	Filter(0,1) = "*.csv"
-	Call OpenSaveDialog("Save .csv file", Filter, FilePath)
+	Call System_Module.OpenSaveDialog("Save .csv file", Filter, FilePath)
 	If FilePath = "" Then
 		MsgBox("invalid file path", 0 + 48, "CSV Module")
 		Exit Sub
@@ -70,9 +67,10 @@ Function TIMETOTEXT(Zelle, Optional FormatString As String = "dd.mm.yyyy HH:MM")
 End Function
 
 Function TRIMLAST(Zelle As String, Optional Length As Integer = 1) As String
-	TRIMLAST = Zelle
-	If Len(Zelle) > 0 Then
+	If Len(Zelle) >= Length Then
 		TRIMLAST = left(Zelle, Len(Zelle)-Length)
+	Else
+		TRIMLAST = "#ERR"
 	End If
 End Function
 
@@ -110,4 +108,3 @@ Function SCANUP_REF(cellRef As String) As String
 HandleError:
 	SCANUP = "#ERR"
 End Function
-
